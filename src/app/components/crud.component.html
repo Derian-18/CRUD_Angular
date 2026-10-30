@@ -1,0 +1,149 @@
+
+<div class="container">
+
+  <!-- Encabezado -->
+  <header class="page-header">
+    <div>
+      <h1>Gestión de productos</h1>
+      <p>Registro y administración de productos.</p>
+    </div>
+  </header>
+
+  <!-- Mensajes -->
+  <div
+    *ngIf="mensaje"
+    class="alerta"
+    [ngClass]="{
+      'msg-exito': tipoMensaje === 'exito',
+      'msg-error': tipoMensaje === 'error'
+    }">
+    {{ mensaje }}
+  </div>
+
+  <!-- Formulario -->
+  <section class="section">
+    <div class="section-header">
+      <h2>{{ editando ? 'Editar producto' : 'Agregar producto' }}</h2>
+    </div>
+
+    <form [formGroup]="productoForm" (ngSubmit)="guardarProducto()">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nombre">Nombre del producto</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            placeholder="Ej. Laptop Gaming">
+
+          <small class="error"
+            *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+            El nombre es obligatorio (mínimo 3 caracteres).
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input
+            id="precio"
+            type="number"
+            formControlName="precio"
+            placeholder="Ej. 1200">
+
+          <small class="error"
+            *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched">
+            El precio debe ser mayor a 0.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <input
+            id="categoria"
+            type="text"
+            formControlName="categoria"
+            placeholder="Ej. Electrónica">
+
+          <small class="error"
+            *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
+            La categoría es obligatoria.
+          </small>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="productoForm.invalid">
+          {{ editando ? 'Actualizar' : 'Guardar' }}
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="limpiarFormulario()"
+          *ngIf="editando">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- Tabla -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Productos registrados</h2>
+      <span>Total: {{ productos.length }}</span>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre del producto</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let prod of productos">
+            <td>{{ prod.id }}</td>
+            <td>{{ prod.nombre }}</td>
+            <td>{{ prod.precio | currency:'MXN':'symbol':'1.2-2' }}</td>
+            <td>{{ prod.categoria }}</td>
+            <td>
+              <div class="table-actions">
+                <button
+                  class="btn-edit"
+                  (click)="cargarProducto(prod)">
+                  Editar
+                </button>
+
+                <button
+                  class="btn-delete"
+                  (click)="eliminarProducto(prod.id!)">
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="productos.length === 0">
+            <td colspan="5" class="empty-state">
+              No hay productos registrados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
